@@ -1,4 +1,12 @@
 # kubernetes-centos-ansible
 
 Role for deploy Kubernetes cluster in Vagrant.
-It deploys 1 master node and 2 worker nodes by default.
+
+Use `vagrant up` to deploy 1 master node and 2 worker nodes.
+
+By default use Flannel CNI.
+
+# TODO
+
+deploy HA cluster
+add other CNI, like Calico
