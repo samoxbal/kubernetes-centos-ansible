@@ -1,0 +1,15 @@
+- hosts: all
+  become: yes
+  roles:
+    - k8s-common
+
+- hosts: master
+  become: yes
+  roles:
+    - k8s-master
+    - k8s-cni
+
+- hosts: nodes
+  become: yes
+  roles:
+    - k8s-node

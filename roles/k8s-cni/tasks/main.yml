@@ -1,0 +1,15 @@
+- name: Copy Flannel deployment template
+  template:
+    src: flannel-rbac.yml.j2
+    dest: /etc/kubernetes/flannel-rbac.yml
+
+- name: Copy Flannel RBAC template
+  template:
+    src: flannel.yml.j2
+    dest: /etc/kubernetes/flannel.yml
+
+- name: Install Flannel RBAC definitions
+  command: kubectl create -f /etc/kubernetes/flannel-rbac.yml
+
+- name: Install Flannel deployment
+  command: kubectl create --namespace kube-system -f /etc/kubernetes/flannel.yml

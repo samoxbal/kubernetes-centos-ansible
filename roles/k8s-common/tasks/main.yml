@@ -1,0 +1,63 @@
+- name: Install Docker
+  yum:
+    name: docker
+    state: present
+    update_cache: true
+
+- name: Enable and start Docker
+  systemd:
+    name: docker
+    enabled: yes
+    state: restarted
+    daemon_reload: yes
+
+- name: Disable SELinux
+  command: setenforce 0
+
+- name: Disable SELinux on reboot
+  selinux:
+    state: disabled
+
+- name: Add Kubernetes yum repository
+  yum_repository:
+    name: kubernetes.io
+    description: Kubernetes packages
+    baseurl: http://yum.kubernetes.io/repos/kubernetes-el7-x86_64
+    gpgcheck: no
+    enabled: yes
+
+- name: Fix bridge-nf-call-iptables
+  sysctl:
+    name: net.bridge.bridge-nf-call-iptables
+    value: 1
+    state: present
+    reload: yes
+
+- name: Remove swapfile from /etc/fstab
+  mount:
+    name: "{{ item }}"
+    fstype: swap
+    state: absent
+  with_items:
+    - swap
+    - none
+
+- name: Disable swap
+  shell: "swapoff -a"
+
+- name: Install kubelet
+  yum:
+    name: kubelet-1.14.0
+    state: present
+    update_cache: true
+
+- name: Install kubeadm
+  yum:
+    name: kubeadm-1.14.0
+    state: present
+
+- name: Start kubelet
+  service:
+    name: kubelet
+    enabled: yes
+    state: started
