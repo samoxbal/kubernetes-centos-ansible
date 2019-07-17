@@ -1,5 +1,9 @@
-token: b0f7b8.8d1767876297d85c
-pod_network_cidr: "10.244.0.0/16"
-apiserver_address: "192.168.50.10"
+network_dir: /etc/kubernetes/network
 kubeadmin_config: /etc/kubernetes/admin.conf
-kubedashboard_path: https://raw.githubusercontent.com/kubernetes/dashboard/v1.10.1/src/deploy/recommended/kubernetes-dashboard.yaml
+kube_dashboard_path: /tmp/kubernetes-dashboard.yml
+
+kube_version: 1.15.0
+kube_cluster_name: alfa-retail
+
+pod_network_cidr: "192.168.0.0/19"
+apiserver_address: "192.168.50.10"

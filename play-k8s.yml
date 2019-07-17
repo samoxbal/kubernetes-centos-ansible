@@ -3,13 +3,13 @@
   roles:
     - k8s-common
 
-- hosts: master
+- hosts: kube-master
   become: yes
   roles:
     - k8s-master
     - k8s-cni
 
-- hosts: nodes
+- hosts: kube-nodes
   become: yes
   roles:
     - k8s-node

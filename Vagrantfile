@@ -16,15 +16,15 @@ Vagrant.configure("2") do |config|
         v.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]
     end
 
-    config.vm.define "k8s-master" do |master|
+    config.vm.define "kube-master" do |master|
         master.vm.network "private_network", ip: "192.168.50.10"
-        master.vm.hostname = "k8s-master"
+        master.vm.hostname = "kube-master"
     end
 
     (1..2).each do |i|
-        config.vm.define "k8s-node-#{i}" do |node|
+        config.vm.define "kube-node-#{i}" do |node|
             node.vm.network "private_network", ip: "192.168.50.#{i + 10}"
-            node.vm.hostname = "k8s-node-#{i}"
+            node.vm.hostname = "kube-node-#{i}"
         end
     end
 
@@ -33,8 +33,8 @@ Vagrant.configure("2") do |config|
         ansible.roles_path = "./roles"
         ansible.playbook = "play-k8s.yml"
         ansible.groups = {
-            "master" => ["k8s-master"],
-            "nodes" => ["k8s-node-1", "k8s-node-2"]
+            "kube-master" => ["kube-master"],
+            "kube-nodes" => ["kube-node-1", "kube-node-2"]
         }
     end
 end

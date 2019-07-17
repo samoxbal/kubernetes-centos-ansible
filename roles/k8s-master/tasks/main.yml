@@ -1,13 +1,11 @@
 - name: Install kubectl
   yum:
-    name: kubectl-1.14.0
+    name: "kubectl-{{ kube_version }}"
     state: present
-    allow_downgrade: yes
 
 - name: Init Kubernetes cluster
   shell: |
     kubeadm init --pod-network-cidr {{ pod_network_cidr }} \
-                 --token {{ token }} \
                  --apiserver-advertise-address {{ apiserver_address }}
 
 - name: Create Kubernetes config directory
@@ -21,10 +19,15 @@
     src: /etc/kubernetes/admin.conf
     dest: /home/root/.kube/config
 
+- name: Copy kubernetes dashboard spec
+  file:
+    src: kubernetes-dashboard.yml
+    dest: "{{ kube_dashboard_path }}"
+
 - name: Deploy kubernetes dashboard into cluster
   command: |
     kubectl --kubeconfig={{ kubeadmin_config }} \
-        apply -f {{ kubedashboard_path }}
+        apply -f {{ kube_dashboard_path }}
   register: create_result
   until: create_result.rc == 0
   retries: 5

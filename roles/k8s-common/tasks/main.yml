@@ -22,7 +22,7 @@
   yum_repository:
     name: kubernetes.io
     description: Kubernetes packages
-    baseurl: http://yum.kubernetes.io/repos/kubernetes-el7-x86_64
+    baseurl: http://mvn/artifactory/rpm-kubernetes
     gpgcheck: no
     enabled: yes
 
@@ -47,13 +47,13 @@
 
 - name: Install kubelet
   yum:
-    name: kubelet-1.14.0
+    name: "kubelet-{{ kube_version }}"
     state: present
     update_cache: true
 
 - name: Install kubeadm
   yum:
-    name: kubeadm-1.14.0
+    name: "kubeadm-{{ kube_version }}"
     state: present
 
 - name: Start kubelet
