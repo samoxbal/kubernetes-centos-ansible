@@ -1,8 +1,19 @@
+- name: Upgrade all packages
+  yum:
+    name: '*'
+    state: latest
+  register: yum_update
+
+- name: Clean up unused packages
+  yum:
+    autoremove: yes
+
 - name: Install Docker
   yum:
     name: docker
     state: present
     update_cache: true
+  when: vagrant | bool == true
 
 - name: Enable and start Docker
   systemd:
@@ -10,6 +21,21 @@
     enabled: yes
     state: restarted
     daemon_reload: yes
+  when: vagrant | bool == true
+
+- name: Install NTP packages
+  yum:
+    name: ['ntp', 'ntpdate']
+    state: present
+  when: vagrant | bool == true
+
+- name: Start NTP
+  command: systemctl start ntpd
+  when: vagrant | bool == true
+
+- name: Enable NTP
+  command: systemctl enable ntpd
+  when: vagrant | bool == true
 
 - name: Disable SELinux
   command: setenforce 0
@@ -22,7 +48,7 @@
   yum_repository:
     name: kubernetes.io
     description: Kubernetes packages
-    baseurl: http://mvn/artifactory/rpm-kubernetes
+    baseurl: http://mvn/artifactory/yumkubernetes/repos/kubernetes-el7-x86_64
     gpgcheck: no
     enabled: yes
 
@@ -33,17 +59,16 @@
     state: present
     reload: yes
 
-- name: Remove swapfile from /etc/fstab
-  mount:
-    name: "{{ item }}"
-    fstype: swap
-    state: absent
-  with_items:
-    - swap
-    - none
-
 - name: Disable swap
   shell: "swapoff -a"
+
+- name: Remove current swaps from fstab
+  lineinfile:
+    dest: /etc/fstab
+    regexp: '(?i)^([^#][\S]+\s+(none|swap)\s+swap.*)'
+    line: '# \1'
+    backrefs: yes
+    state: present
 
 - name: Install kubelet
   yum:
@@ -56,8 +81,25 @@
     name: "kubeadm-{{ kube_version }}"
     state: present
 
+- name: Create service drop-in directory
+  file:
+    path: /etc/systemd/system/kubelet.service.d/
+    state: directory
+    mode: 0755
+
+- name: Copy kubeadm conf to drop-in directory
+  template:
+    src: 20-extra-args.conf.j2
+    dest: /etc/systemd/system/kubelet.service.d/20-extra-args.conf
+
 - name: Start kubelet
   service:
     name: kubelet
     enabled: yes
     state: started
+
+- name: Reload kubelet daemon
+  systemd:
+    name: kubelet
+    daemon_reload: yes
+    enabled: yes

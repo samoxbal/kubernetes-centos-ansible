@@ -8,8 +8,4 @@
   roles:
     - k8s-master
     - k8s-cni
-
-- hosts: kube-nodes
-  become: yes
-  roles:
-    - k8s-node
+    - helm

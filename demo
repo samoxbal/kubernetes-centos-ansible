@@ -1,0 +1,9 @@
+[kube-master]
+amlogdemo1
+
+[kube-nodes]
+amlogdemo2
+amlogdemo3
+
+[all:vars]
+ansible_password=qwerty

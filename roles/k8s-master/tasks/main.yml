@@ -9,6 +9,8 @@
                  --apiserver-advertise-address {{ apiserver_address }}
 
 - name: Create Kubernetes config directory
+  become: yes
+  become_user: vagrant
   file:
     path: "~/.kube"
     state: directory
@@ -17,10 +19,12 @@
 - name: Copy admin.conf to user's Kubernetes config
   copy:
     src: /etc/kubernetes/admin.conf
-    dest: /home/root/.kube/config
+    dest: /home/vagrant/.kube/config
+    remote_src: yes
+    owner: vagrant
 
 - name: Copy kubernetes dashboard spec
-  file:
+  copy:
     src: kubernetes-dashboard.yml
     dest: "{{ kube_dashboard_path }}"
 

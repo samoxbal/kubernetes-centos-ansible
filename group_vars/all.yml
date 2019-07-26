@@ -2,8 +2,10 @@ network_dir: /etc/kubernetes/network
 kubeadmin_config: /etc/kubernetes/admin.conf
 kube_dashboard_path: /tmp/kubernetes-dashboard.yml
 
-kube_version: 1.15.0
-kube_cluster_name: alfa-retail
+kube_version: 1.15.1
 
-pod_network_cidr: "192.168.0.0/19"
-apiserver_address: "192.168.50.10"
+pod_network_cidr: "172.0.0.0/19"
+apiserver_address: "{{ groups['kube-master'][0] | map('extract', hostvars, ['ansible_host']) }}"
+calico_ipv4_pool_cidr: "172.0.0.0/19"
+
+vagrant: False

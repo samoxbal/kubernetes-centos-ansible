@@ -1,0 +1,19 @@
+- name: Get Helm release tar archive
+  get_url:
+    url: https://get.helm.sh/helm-v2.14.2-linux-amd64.tar.gz
+    dest: /tmp/helm-install.tar.gz
+
+- name: Сreate Helm installation directory
+  file:
+    path: /opt/bin/helm
+    state: directory
+    mode: 0755
+
+- name: Unarchive Helm
+  unarchive:
+    copy: no
+    src: /tmp/helm-install.tar.gz
+    dest: /opt/bin/helm
+
+- name: Move Helm binary
+  command: mv /opt/bin/helm/linux-amd64/helm /usr/local/bin/helm

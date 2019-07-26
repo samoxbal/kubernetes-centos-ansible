@@ -30,11 +30,10 @@ Vagrant.configure("2") do |config|
 
     config.vm.provision :ansible do |ansible|
         ansible.host_key_checking = false
-        ansible.roles_path = "./roles"
         ansible.playbook = "play-k8s.yml"
-        ansible.groups = {
-            "kube-master" => ["kube-master"],
-            "kube-nodes" => ["kube-node-1", "kube-node-2"]
+        ansible.inventory_path = "./vagrant"
+        ansible.extra_vars = {
+            vagrant: true
         }
     end
 end
