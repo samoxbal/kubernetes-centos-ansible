@@ -1,0 +1,19 @@
+- name: Copy nginx ingress mandatory spec
+  template:
+    src: ingress-nginx.yml.j2
+    dest: "{{ nginx_ingress_path }}"
+
+- name: Copy nginx service nodeport spec
+  copy:
+    src: service-nodeport.yml
+    dest: "{{ nginx_service_nodeport_path }}"
+
+- name: Run mandatory command
+  become: yes
+  become_user: vagrant
+  shell: "kubectl apply -f {{ nginx_ingress_path }}"
+
+- name: Run provider command
+  become: yes
+  become_user: vagrant
+  shell: "kubectl apply -f {{ nginx_service_nodeport_path }}"

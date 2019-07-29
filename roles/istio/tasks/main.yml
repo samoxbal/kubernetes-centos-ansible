@@ -1,8 +1,8 @@
 - name: Get Istio release
-  command: curl -L https://git.io/getLatestIstio | ISTIO_VERSION=1.2.2 sh -
+  shell: curl -L https://git.io/getLatestIstio | ISTIO_VERSION=1.2.2 sh -
 
 - name: Create Istio namespace
-  command: kubectl create namespace istio-system
+  shell: kubectl create namespace istio-system
 
 - name: Install Istio CRDs
   command: helm template install/kubernetes/helm/istio-init --name istio-init --namespace istio-system | kubectl apply -f -

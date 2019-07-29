@@ -28,12 +28,35 @@ Vagrant.configure("2") do |config|
         end
     end
 
-    config.vm.provision :ansible do |ansible|
-        ansible.host_key_checking = false
-        ansible.playbook = "play-k8s.yml"
-        ansible.inventory_path = "./vagrant"
-        ansible.extra_vars = {
-            vagrant: true
+    def config_provision_playbook(config, playbook_name, extra_vars)
+        ansible_groups = {
+            "kube-master" => ["kube-master"],
+            "kube-nodes" => ["kube-node-1", "kube-node-2"]
         }
+        config.vm.provision playbook_name, type: 'ansible' do |ansible|
+            ansible.host_key_checking = false
+            ansible.playbook = "#{playbook_name}.yml"
+            ansible.groups = ansible_groups
+            ansible.extra_vars = extra_vars
+        end
     end
+
+    config_provision_playbook(config, "play-k8s", extra_vars = {
+        vagrant: true,
+        calico_ipv4_pool_cidr: "192.168.0.0/16",
+        pod_network_cidr: "192.168.0.0/19",
+        apiserver_address: "192.168.50.10"
+    })
+
+    config_provision_playbook(config, "play-k8s-nodes", {})
+
+    config_provision_playbook(config, "play-ingress-nginx", {
+        vagrant: true,
+        nginx_ingress_image: "quay.io/kubernetes-ingress-controller/nginx-ingress-controller:0.25.0"
+    })
+
+    config_provision_playbook(config, "play-k8s-dashboard", {
+        vagrant: true,
+        kube_dashboard_image: "k8s.gcr.io/kubernetes-dashboard-amd64:v1.10.1"
+    })
 end

@@ -1,11 +1,18 @@
 network_dir: /etc/kubernetes/network
 kubeadmin_config: /etc/kubernetes/admin.conf
-kube_dashboard_path: /tmp/kubernetes-dashboard.yml
+
+kube_dashboard_path: /tmp/k8s-dashboard.yml
+kube_dashboard_ingress_path: /tmp/k8s-dashboard-ingress.yml
+kube_dashboard_image: k8s-gcr-io.binary.alfabank.ru/kubernetes-dashboard-amd64:v1.10.1
+
+nginx_ingress_path: /tmp/ingress-nginx.yml
+nginx_service_nodeport_path: /tmp/service-nodeport.yml
+nginx_ingress_image: quay.binary.alfabank.ru/kubernetes-ingress-controller/nginx-ingress-controller:0.24.1
 
 kube_version: 1.15.1
 
 pod_network_cidr: "172.0.0.0/19"
-apiserver_address: "{{ groups['kube-master'][0] | map('extract', hostvars, ['ansible_host']) }}"
+apiserver_address: "{{ hostvars['kube-master']['ansible_default_ipv4']['address'] }}"
 calico_ipv4_pool_cidr: "172.0.0.0/19"
 
 vagrant: False
