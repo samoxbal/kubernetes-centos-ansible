@@ -28,35 +28,42 @@ Vagrant.configure("2") do |config|
         end
     end
 
-    def config_provision_playbook(config, playbook_name, extra_vars)
+    def config_provision_playbook(config, component_name, extra_vars = {})
         ansible_groups = {
             "kube-master" => ["kube-master"],
             "kube-nodes" => ["kube-node-1", "kube-node-2"]
         }
-        config.vm.provision playbook_name, type: 'ansible' do |ansible|
+        config.vm.provision component_name, type: 'ansible' do |ansible|
             ansible.host_key_checking = false
-            ansible.playbook = "#{playbook_name}.yml"
+            ansible.playbook = "play-#{component_name}.yml"
             ansible.groups = ansible_groups
             ansible.extra_vars = extra_vars
         end
     end
 
-    config_provision_playbook(config, "play-k8s", extra_vars = {
+    config_provision_playbook(config, "k8s", extra_vars = {
         vagrant: true,
+        kubeadm_user: "vagrant",
         calico_ipv4_pool_cidr: "192.168.0.0/16",
         pod_network_cidr: "192.168.0.0/19",
-        apiserver_address: "192.168.50.10"
+        apiserver_address: "192.168.50.10",
+        calico_cni_image: "calico/cni:v3.8.0",
+        calico_pod2deamon_image: "calico/pod2daemon-flexvol:v3.8.0",
+        calico_node_image: "calico/node:v3.8.0",
+        calico_controller_image: "calico/kube-controllers:v3.8.0"
     })
 
-    config_provision_playbook(config, "play-k8s-nodes", {})
+    config_provision_playbook(config, "k8s-nodes")
 
-    config_provision_playbook(config, "play-ingress-nginx", {
-        vagrant: true,
-        nginx_ingress_image: "quay.io/kubernetes-ingress-controller/nginx-ingress-controller:0.25.0"
+    config_provision_playbook(config, "helm", {
+        kubeadm_user: "vagrant"
     })
 
-    config_provision_playbook(config, "play-k8s-dashboard", {
-        vagrant: true,
-        kube_dashboard_image: "k8s.gcr.io/kubernetes-dashboard-amd64:v1.10.1"
+    config_provision_playbook(config, "istio", {
+        kubeadm_user: "vagrant"
+    })
+
+    config_provision_playbook(config, "k8s-dashboard", {
+        kube_dashboard_manifest: "https://raw.githubusercontent.com/kubernetes/dashboard/v2.0.0-beta1/aio/deploy/recommended.yaml"
     })
 end

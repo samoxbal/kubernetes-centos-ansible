@@ -1,18 +1,22 @@
 network_dir: /etc/kubernetes/network
 kubeadmin_config: /etc/kubernetes/admin.conf
 
-kube_dashboard_path: /tmp/k8s-dashboard.yml
-kube_dashboard_ingress_path: /tmp/k8s-dashboard-ingress.yml
-kube_dashboard_image: k8s-gcr-io.binary.alfabank.ru/kubernetes-dashboard-amd64:v1.10.1
+calico_cni_image: docker.moscow.alfaintra.net/calico/cni:v3.8.0
+calico_pod2deamon_image: docker.moscow.alfaintra.net/calico/pod2daemon-flexvol:v3.8.0
+calico_node_image: docker.moscow.alfaintra.net/calico/node:v3.8.0
+calico_controller_image: docker.moscow.alfaintra.net/calico/kube-controllers:v3.8.0
 
-nginx_ingress_path: /tmp/ingress-nginx.yml
-nginx_service_nodeport_path: /tmp/service-nodeport.yml
-nginx_ingress_image: quay.binary.alfabank.ru/kubernetes-ingress-controller/nginx-ingress-controller:0.24.1
+kube_dashboard_manifest: http://binary/artifactory/kube-manifests/kubernetes-dashboard.yml
+kubectl_binary_path: http://binary/artifactory/kube-manifests/kubectl
+istio_release_path: http://binary/artifactory/kube-manifests/istio-1.2.2.tar.gz
+helm_release_path: http://binary/artifactory/kube-manifests/helm-v2.14.2-linux-amd64.tar.gz
+helm_tiller_image: gcr.binary.alfabank.ru/kubernetes-helm/tiller:v2.14.1
 
 kube_version: 1.15.1
 
 pod_network_cidr: "172.0.0.0/19"
-apiserver_address: "{{ hostvars['kube-master']['ansible_default_ipv4']['address'] }}"
+apiserver_address: "{{ hostvars[groups['kube-master'][0]]['ansible_default_ipv4']['address'] }}"
 calico_ipv4_pool_cidr: "172.0.0.0/19"
 
 vagrant: False
+kubeadm_user: dockeradm

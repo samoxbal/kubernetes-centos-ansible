@@ -1,8 +1,3 @@
-- name: Get Helm release tar archive
-  get_url:
-    url: https://get.helm.sh/helm-v2.14.2-linux-amd64.tar.gz
-    dest: /tmp/helm-install.tar.gz
-
 - name: Сreate Helm installation directory
   file:
     path: /opt/bin/helm
@@ -11,9 +6,20 @@
 
 - name: Unarchive Helm
   unarchive:
-    copy: no
-    src: /tmp/helm-install.tar.gz
+    src: "{{ helm_release_path }}"
     dest: /opt/bin/helm
+    remote_src: yes
 
 - name: Move Helm binary
   command: mv /opt/bin/helm/linux-amd64/helm /usr/local/bin/helm
+
+- name: Copy Tiller RBAC config
+  copy:
+    src: tiller-rbac.yml
+    dest: /tmp/tiller-rbac.yml
+
+#- name: Create Tiller role and service
+#  shell: kubectl apply -f /tmp/tiller-rbac.yml
+
+#- name: Init Helm
+#  shell: helm init --service-account=tiller --tiller-image=gcr.binary.alfabank.ru/kubernetes-helm/tiller:v2.14.1 --history-max 300

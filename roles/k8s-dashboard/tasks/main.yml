@@ -1,19 +1,5 @@
-- name: Copy kubernetes dashboard spec
-  template:
-    src: k8s-dashboard.yml.j2
-    dest: "{{ kube_dashboard_path }}"
-
-- name: Copy dashboard ingress spec
-  copy:
-    src: k8s-dashboard-ingress.yml
-    dest: "{{ kube_dashboard_ingress_path }}"
-
 - name: Deploy kubernetes dashboard
   become: yes
   become_user: vagrant
-  shell: "kubectl apply -f {{ kube_dashboard_path }}"
+  shell: "kubectl apply -f {{ kube_dashboard_manifest }}"
 
-- name: Deploy dashboard ingress
-  become: yes
-  become_user: vagrant
-  shell: "kubectl apply -f {{ kube_dashboard_ingress_path }}"

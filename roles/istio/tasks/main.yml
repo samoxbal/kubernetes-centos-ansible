@@ -1,11 +1,20 @@
 - name: Get Istio release
-  shell: curl -L https://git.io/getLatestIstio | ISTIO_VERSION=1.2.2 sh -
+  unarchive:
+    src: "{{ istio_release_path }}"
+    dest: /tmp
+    remote_src: yes
 
 - name: Create Istio namespace
+  become: yes
+  become_user: "{{ kubeadm_user }}"
   shell: kubectl create namespace istio-system
 
-- name: Install Istio CRDs
-  command: helm template install/kubernetes/helm/istio-init --name istio-init --namespace istio-system | kubectl apply -f -
-
-- name: Select default configuration profile
-  command: helm template install/kubernetes/helm/istio --name istio --namespace istio-system | kubectl apply -f -
+#- name: Install Istio CRDs
+#  become: yes
+#  become_user: "{{ kubeadm_user }}"
+#  shell: helm install install/kubernetes/helm/istio-init --name istio-init --namespace istio-system
+#
+#- name: Select default configuration profile
+#  become: yes
+#  become_user: vagrant
+#  shell: helm install install/kubernetes/helm/istio --name istio --namespace istio-system

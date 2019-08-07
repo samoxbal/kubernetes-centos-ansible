@@ -1,24 +1,26 @@
 - name: Install kubectl
-  yum:
-    name: "kubectl-{{ kube_version }}"
-    state: present
+  get_url:
+    url: "{{ kubectl_binary_path }}"
+    dest: /usr/local/bin/kubectl
+    mode: 0755
 
 - name: Init Kubernetes cluster
   shell: |
     kubeadm init --pod-network-cidr {{ pod_network_cidr }} \
+                 --kubernetes-version {{ kube_version }} \
                  --apiserver-advertise-address {{ apiserver_address }}
 
 - name: Create Kubernetes config directory
   become: yes
-  become_user: vagrant
+  become_user: "{{ kubeadm_user }}"
   file:
     path: "~/.kube"
     state: directory
     mode: 0755
 
-- name: Copy admin.conf to user's Kubernetes config
+- name: Copy admin.conf to user Kubernetes config
   copy:
     src: /etc/kubernetes/admin.conf
-    dest: /home/vagrant/.kube/config
+    dest: "/home/{{ kubeadm_user }}/.kube/config"
     remote_src: yes
-    owner: vagrant
+    owner: "{{ kubeadm_user }}"
