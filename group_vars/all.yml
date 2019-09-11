@@ -6,7 +6,6 @@ calico_pod2deamon_image: docker.moscow.alfaintra.net/calico/pod2daemon-flexvol:v
 calico_node_image: docker.moscow.alfaintra.net/calico/node:v3.8.0
 calico_controller_image: docker.moscow.alfaintra.net/calico/kube-controllers:v3.8.0
 
-kube_dashboard_manifest: http://binary/artifactory/kube-manifests/kubernetes-dashboard.yml
 kubectl_binary_path: http://binary/artifactory/kube-manifests/kubectl
 istio_release_path: http://binary/artifactory/kube-manifests/istio-1.2.2.tar.gz
 helm_release_path: http://binary/artifactory/kube-manifests/helm-v2.14.2-linux-amd64.tar.gz

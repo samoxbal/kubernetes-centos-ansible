@@ -1,5 +1,19 @@
-- name: Deploy kubernetes dashboard
-  become: yes
-  become_user: vagrant
-  shell: "kubectl apply -f {{ kube_dashboard_manifest }}"
+- name: Copy dashboard manifest
+  copy:
+    src: k8s-dashboard.yml
+    dest: /tmp/k8s-dashboard.yml
 
+- name: Deploy k8s dashboard manifest
+  become: yes
+  become_user: dockeradm
+  shell: kubectl apply -f /tmp/k8s-dashboard.yml
+
+- name: Deploy k8s dashboard admin role
+  become: yes
+  become_user: dockeradm
+  shell: echo "{{ lookup('file', '../files/k8s-dashboard-admin-role.yml') }}" | kubectl apply -f -
+
+- name: Deploy dashboard ingress
+  become: yes
+  become_user: dockeradm
+  shell: echo "{{ lookup('file', '../files/k8s-dashboard-ingress.yml') }}" | kubectl apply -f -

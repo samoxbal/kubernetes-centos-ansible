@@ -1,0 +1,4 @@
+- hosts: kube-master
+  become: yes
+  roles:
+    - nginx-ingress

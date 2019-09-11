@@ -54,16 +54,14 @@ Vagrant.configure("2") do |config|
     })
 
     config_provision_playbook(config, "k8s-nodes")
-
-    config_provision_playbook(config, "helm", {
-        kubeadm_user: "vagrant"
-    })
+    config_provision_playbook(config, "helm")
 
     config_provision_playbook(config, "istio", {
-        kubeadm_user: "vagrant"
+        kubeadm_user: "vagrant",
+        istio_release_path: "https://github.com/istio/istio/releases/download/1.2.2/istio-1.2.2-linux.tar.gz"
     })
 
     config_provision_playbook(config, "k8s-dashboard", {
-        kube_dashboard_manifest: "https://raw.githubusercontent.com/kubernetes/dashboard/v2.0.0-beta1/aio/deploy/recommended.yaml"
+        kube_dashboard_image: "k8s.gcr.io/kubernetes-dashboard-amd64:v1.10.1"
     })
 end

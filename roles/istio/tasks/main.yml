@@ -8,13 +8,20 @@
   become: yes
   become_user: "{{ kubeadm_user }}"
   shell: kubectl create namespace istio-system
+  ignore_errors: yes
 
-#- name: Install Istio CRDs
-#  become: yes
-#  become_user: "{{ kubeadm_user }}"
-#  shell: helm install install/kubernetes/helm/istio-init --name istio-init --namespace istio-system
-#
-#- name: Select default configuration profile
-#  become: yes
-#  become_user: vagrant
-#  shell: helm install install/kubernetes/helm/istio --name istio --namespace istio-system
+- name: Copy Istio values
+  copy:
+    src: istio-values.yml
+    dest: /tmp/istio-values.yml
+
+- name: Copy IngressGateway
+  copy:
+    src: http-gateway.yml
+    dest: /tmp/http-gateway.yml
+
+- name: Install Istio CRDs
+  command: helm install /tmp/istio-1.2.2/install/kubernetes/helm/istio-init --name istio-init --namespace istio-system
+
+- name: Select configuration profile
+  command: helm install /tmp/istio-1.2.2/install/kubernetes/helm/istio --name istio --namespace istio-system --values /tmp/istio-values.yml
