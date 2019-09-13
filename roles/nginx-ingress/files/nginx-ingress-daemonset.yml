@@ -220,6 +220,7 @@ spec:
             - --udp-services-configmap=$(POD_NAMESPACE)/udp-services
             - --report-node-internal-ip-address
             - --annotations-prefix=nginx.ingress.kubernetes.io
+            - --http-port=8080
             - --https-port=443
           securityContext:
             allowPrivilegeEscalation: true
@@ -240,8 +241,10 @@ spec:
                 fieldRef:
                   fieldPath: metadata.namespace
           ports:
+            - name: http
+              containerPort: 8080
             - name: https
-              containerPort: 443
+              containerPort: 8443
           livenessProbe:
             failureThreshold: 3
             httpGet:

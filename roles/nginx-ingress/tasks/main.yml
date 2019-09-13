@@ -1,20 +1,24 @@
 - name: Create nginx ingress namespace
   become: yes
   become_user: dockeradm
-  shell: echo "{{ lookup('file', '../files/nginx-ingress-namespace.yml') }}" | kubectl apply -f -
+  shell: |
+    cat <<EOF | kubectl apply -f -
+    {{ lookup('file', '../files/nginx-ingress-namespace.yml') }}
+    EOF
   ignore_errors: yes
 
 - name: Deploy nginx ingress secret
   become: yes
   become_user: dockeradm
-  shell: echo "{{ lookup('file', '../files/nginx-ingress-tls-secret.yml') }}" | kubectl apply -f -
-
-- name: Copy nginx ingress daemonset manifest
-  copy:
-    src: nginx-ingress-daemonset.yml
-    dest: /tmp/nginx-ingress-daemonset.yml
+  shell: |
+    cat <<EOF | kubectl apply -f -
+    {{ lookup('file', '../files/nginx-ingress-tls-secret.yml') }}
+    EOF
 
 - name: Deploy nginx ingress daemonset
   become: yes
   become_user: dockeradm
-  shell: kubectl apply -f /tmp/nginx-ingress-daemonset.yml
+  shell: |
+    cat <<EOF | kubectl apply -f -
+    {{ lookup('file', '../files/nginx-ingress-daemonset.yml') }}
+    EOF

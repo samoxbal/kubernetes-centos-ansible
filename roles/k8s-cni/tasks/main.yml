@@ -9,4 +9,4 @@
     dest: "{{ network_dir }}/calico.yml"
 
 - name: Install Calico
-  command: "kubectl create --kubeconfig={{ kubeadmin_config }} -f {{ network_dir }}/calico.yml"
+  command: kubectl create --kubeconfig={{ kubeadmin_config }} -f {{ network_dir }}/calico.yml
